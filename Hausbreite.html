@@ -15,7 +15,7 @@
   <button onclick="submitForm()">An Bitrix24 senden</button>
 
   <script>
-    const DEAL_ID = 1;
+    const DEAL_ID = 1; // Falls du später dynamisch willst: per URL ?deal_id=XYZ
 
     document.getElementById("width").addEventListener("input", () => {
       const w = parseFloat(document.getElementById("width").value) || 0;
@@ -26,24 +26,28 @@
       const width = parseFloat(document.getElementById("width").value) || 0;
       const calculated = width * 2;
 
-      fetch("https://b24-wb4alr.bitrix24.de/rest/1/swov9l7bvieaq93q/crm.deal.update", {
+      fetch("https://sunergy.bitrix24.de/rest/1/j88u08cqav5oo5wj/crm.deal.update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: DEAL_ID,
           fields: {
-            UF_CRM_1748426115921: calculated
+            UF_CRM_1748426115921: calculated // Feldcode Hausbreite
           }
         })
       })
-      .then(res => res.text())
+      .then(res => res.json())
       .then(data => {
-        alert("Gespeichert in Bitrix24!");
-        console.log(data);
+        if (data.result === true) {
+          alert("Erfolgreich gespeichert in Bitrix24 ✅");
+        } else {
+          console.error(data);
+          alert("❌ Fehler: " + JSON.stringify(data));
+        }
       })
       .catch(err => {
-        alert("Fehler bei der Übertragung");
         console.error(err);
+        alert("Fehler bei der Übertragung");
       });
     }
   </script>
