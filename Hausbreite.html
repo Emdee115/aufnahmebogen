@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Hausbreite erfassen</title>
+</head>
+<body>
+  <h2>Hausbreite eingeben</h2>
+
+  <label for="width">Hausbreite (in Metern):</label><br>
+  <input type="number" id="width" placeholder="z. B. 10"><br><br>
+
+  <p>Dachfläche (Hausbreite × 2): <span id="result">0</span> m²</p>
+
+  <button onclick="submitForm()">An Bitrix24 senden</button>
+
+  <script>
+    const DEAL_ID = 1;
+
+    document.getElementById("width").addEventListener("input", () => {
+      const w = parseFloat(document.getElementById("width").value) || 0;
+      document.getElementById("result").textContent = w * 2;
+    });
+
+    function submitForm() {
+      const width = parseFloat(document.getElementById("width").value) || 0;
+      const calculated = width * 2;
+
+      fetch("https://b24-wb4alr.bitrix24.de/rest/1/swov9l7bvieaq93q/crm.deal.update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: DEAL_ID,
+          fields: {
+            UF_CRM_1748426115921: calculated
+          }
+        })
+      })
+      .then(res => res.text())
+      .then(data => {
+        alert("Gespeichert in Bitrix24!");
+        console.log(data);
+      })
+      .catch(err => {
+        alert("Fehler bei der Übertragung");
+        console.error(err);
+      });
+    }
+  </script>
+</body>
+</html>
